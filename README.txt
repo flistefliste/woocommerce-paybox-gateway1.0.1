@@ -1,4 +1,4 @@
-Je=== Woocommerce PayBox Payment Gateway ===
+=== Woocommerce PayBox Payment Gateway ===
 Contributors: CASTELIS (SWO), Vincent Pintat (Wallie)
 Tags: woocommerce, commerce, e-commerce, ecommerce, payment, payment gateway, paybox
 Requires at least: 4.0
