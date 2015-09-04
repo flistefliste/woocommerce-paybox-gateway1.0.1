@@ -210,6 +210,7 @@ class WC_Paybox extends WC_Payment_Gateway {
      * @return array
      */
     function process_payment($order_id) {
+        global $woocommerce ;
         $order = new WC_Order($order_id);
         if(version_compare($woocommerce->version, '2.1.0', '<')) {
             $pay_url = add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(woocommerce_get_page_id('pay'))));
