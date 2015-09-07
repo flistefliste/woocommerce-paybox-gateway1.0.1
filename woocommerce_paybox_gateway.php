@@ -21,12 +21,12 @@
 		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		if( !is_plugin_active('woocommerce/woocommerce.php') )
 		{
-			_e('WooCommerce must be installed and activated in order to use this plugin !', $this->text_domain);
+			_e('WooCommerce must be installed and activated in order to use this plugin !', 'paybox_gateway');
 			exit;
 		}
 		if( !class_exists('WC_Payment_Gateway') )
 		{
-			_e('An error as occured with WooCommerce: can not find gateway methods...', $this->text_domain);
+			_e('An error as occured with WooCommerce: can not find gateway methods...', 'paybox_gateway');
 			exit;
 		}
 	}
@@ -82,7 +82,7 @@
 			$my_WC_Paybox = new WC_Paybox();
 			if (str_replace('//', '/', '/' . $return_url) == str_replace('//', '/', $my_WC_Paybox->return_url))
 			{
-				$std_msg = __('Paybox Return IP', $this->text_domain).' : '.WC_Paybox::getRealIpAddr().'<br/>'.$data.'<br/><div style="word-wrap:break-word;">'.__('PBX Sign', $this->text_domain).' : '. $sign . '<div>';
+				$std_msg = __('Paybox Return IP', 'paybox_gateway').' : '.WC_Paybox::getRealIpAddr().'<br/>'.$data.'<br/><div style="word-wrap:break-word;">'.__('PBX Sign', 'paybox_gateway').' : '. $sign . '<div>';
 				@ob_clean();
 				// Traitement du retour PayBox
 				// PBX_RETOUR=order:R;erreur:E;carte:C;numauto:A;numtrans:S;numabo:B;montantbanque:M;sign:K
@@ -107,21 +107,21 @@
 								// Si montant ok
 								if ((int) (100 * $order->get_total()) == (int) $_GET['montantbanque']) 
 								{
-									$order->add_order_note('<p style="color:green"><b>'.__('Paybox Return OK', $this->text_domain).'</b></p><br/>' . $std_msg);
+									$order->add_order_note('<p style="color:green"><b>'.__('Paybox Return OK', 'paybox_gateway').'</b></p><br/>' . $std_msg);
 									$order->payment_complete();
-									wp_die(__('OK', $this->text_domain), '', array('response' => 200));
+									wp_die(__('OK', 'paybox_gateway'), '', array('response' => 200));
 								}
-								$order->add_order_note('<p style="color:red"><b>'.__('ERROR', $this->text_domain).'</b></p> '.__('Order Amount', $this->text_domain).'.<br/>' . $std_msg);
-								wp_die(__('KO Amount modified', $this->text_domain).' : ' . $_GET['montantbanque'] . ' / ' . (100 * $order->get_total()), '', array('response' => 406));
+								$order->add_order_note('<p style="color:red"><b>'.__('ERROR', 'paybox_gateway').'</b></p> '.__('Order Amount', 'paybox_gateway').'.<br/>' . $std_msg);
+								wp_die(__('KO Amount modified', 'paybox_gateway').' : ' . $_GET['montantbanque'] . ' / ' . (100 * $order->get_total()), '', array('response' => 406));
 							}
-							$order->add_order_note('<p style="color:red"><b>'.__('ERROR', $this->text_domain).'</b></p> '.__('Signature Rejected', $this->text_domain).'.<br/>' . $std_msg);
-							wp_die(__('KO Signature', $this->text_domain), '', array('response' => 406));
+							$order->add_order_note('<p style="color:red"><b>'.__('ERROR', 'paybox_gateway').'</b></p> '.__('Signature Rejected', 'paybox_gateway').'.<br/>' . $std_msg);
+							wp_die(__('KO Signature', 'paybox_gateway'), '', array('response' => 406));
 						default:
-							$order->add_order_note('<p style="color:red"><b>'.__('PBX ERROR', $this->text_domain).' ' . $_GET['erreur'] . '</b> ' . WC_Paybox::getErreurMsg($_GET['erreur']) . '</p><br/>' . $std_msg);
-							wp_die(__('OK received', $this->text_domain), '', array('response' => 200));
+							$order->add_order_note('<p style="color:red"><b>'.__('PBX ERROR', 'paybox_gateway').' ' . $_GET['erreur'] . '</b> ' . WC_Paybox::getErreurMsg($_GET['erreur']) . '</p><br/>' . $std_msg);
+							wp_die(__('OK received', 'paybox_gateway'), '', array('response' => 200));
 					}
 				} else
-					wp_die(__('Test AutoResponse OK', $this->text_domain), '', array('response' => 200));
+					wp_die(__('Test AutoResponse OK', 'paybox_gateway'), '', array('response' => 200));
 			}
 		}
 	}
