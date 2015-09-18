@@ -2,7 +2,7 @@
 	/**
 	 * Plugin Name: Paybox WooCommerce Payment Gateway
 	 * Plugin URI: http://walliecreation.com/
-	 * Description: Gateway e-commerce for Paybox. Initial release by SWO (Open Boutique). Partially recoded by V. Pintat to fit whith WooCommerce 2.4.6 
+	 * Description: Gateway e-commerce for Paybox. Initial release by SWO (Open Boutique). Partially recoded by V. Pintat to fit whith WooCommerce 2.4.6 and up... 
 	 * Version: 1.0.2
 	 * Author: Vincent Pintat
 	 * Author URI: http://walliecreation.com/

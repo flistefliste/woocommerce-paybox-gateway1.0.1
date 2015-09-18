@@ -65,6 +65,7 @@ class WC_Paybox extends WC_Payment_Gateway {
 						<a target="_self" href="./post.php?post=' . get_option('woocommerce_pbx_order_refused_page_id') . '&action=edit">' . __('refused', $this->text_domain) . '</a>
 					</p>';
         }
+        echo '<p>'.__('Paybox return url (IPN) is by default your website home url, currently set to' , $this->text_domain).' <em>'.$this->return_url.'</em></p>';
         echo '<table class="form-table">';
         $this->generate_settings_html();
         echo '</table>';
