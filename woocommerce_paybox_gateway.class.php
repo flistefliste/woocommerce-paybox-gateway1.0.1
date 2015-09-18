@@ -20,6 +20,7 @@ class WC_Paybox extends WC_Payment_Gateway {
         foreach ($this->settings as $key => $val)
             $this->$key = $val;
         // Chargement des traductions
+        $this->return_url = get_bloginfo('url' );
         load_plugin_textdomain($this->text_domain, false, dirname(plugin_basename(__FILE__)).'/lang/');
         // Ajout des Hooks
 
@@ -152,12 +153,12 @@ class WC_Paybox extends WC_Payment_Gateway {
                 'description' => __('Time to wait before to redirect to Paybox gateway (in milliseconds).', $this->text_domain),
                 'default' => '2000'
             ),
-            'return_url' => array(
-                'title' => __('Paybox return URL', $this->text_domain),
-                'type' => 'text',
-                'description' => __('Please enter the autoreponse URL for PayBox.', $this->text_domain),
-                'default' => '/paybox_autoresponse'
-            ),
+            // 'return_url' => array(
+            //     'title' => __('Paybox return URL', $this->text_domain),
+            //     'type' => 'text',
+            //     'description' => __('Please enter the autoreponse URL for PayBox.', $this->text_domain),
+            //     'default' => '/paybox_autoresponse'
+            // ),
             'callback_success_url' => array(
                 'title' => __('Successful Return Link', $this->text_domain),
                 'type' => 'text',
@@ -320,72 +321,72 @@ class WC_Paybox extends WC_Payment_Gateway {
         return $ip;
     }
 
-    static function getErreurMsg($code_erreur) {
+    function getErreurMsg($code_erreur) {
         switch ($code_erreur) {
             case '00000':
-                $erreur_msg = __('Opération réussie.', $this->text_domain);
+                $erreur_msg = __('Opération réussie.', 'paybox_gateway');
                 break;
             case '00001':
-                $erreur_msg = __('La connexion au centre d\'autorisation a échoué. Vous pouvez dans ce cas là effectuer les redirections des internautes vers le FQDN', $this->text_domain) . ' tpeweb1.paybox.com.';
+                $erreur_msg = __('La connexion au centre d\'autorisation a échoué. Vous pouvez dans ce cas là effectuer les redirections des internautes vers le FQDN', 'paybox_gateway') . ' tpeweb1.paybox.com.';
                 break;
             case '00002':
-                $erreur_msg = __('Une erreur de cohérence est survenue.', $this->text_domain);
+                $erreur_msg = __('Une erreur de cohérence est survenue.', 'paybox_gateway');
                 break;
             case '00003':
-                $erreur_msg = __('Erreur Paybox.', $this->text_domain);
+                $erreur_msg = __('Erreur Paybox.', 'paybox_gateway');
                 break;
             case '00004':
-                $erreur_msg = __('Numéro de porteur ou crytogramme visuel invalide.', $this->text_domain);
+                $erreur_msg = __('Numéro de porteur ou crytogramme visuel invalide.', 'paybox_gateway');
                 break;
             case '00006':
-                $erreur_msg = __('Accès refusé ou site/rang/identifiant incorrect.', $this->text_domain);
+                $erreur_msg = __('Accès refusé ou site/rang/identifiant incorrect.', 'paybox_gateway');
                 break;
             case '00008':
-                $erreur_msg = __('Date de fin de validité incorrecte.', $this->text_domain);
+                $erreur_msg = __('Date de fin de validité incorrecte.', 'paybox_gateway');
                 break;
             case '00009':
-                $erreur_msg = __('Erreur de création d\'un abonnement.', $this->text_domain);
+                $erreur_msg = __('Erreur de création d\'un abonnement.', 'paybox_gateway');
                 break;
             case '00010':
-                $erreur_msg = __('Devise inconnue.', $this->text_domain);
+                $erreur_msg = __('Devise inconnue.', 'paybox_gateway');
                 break;
             case '00011':
-                $erreur_msg = __('Montant incorrect.', $this->text_domain);
+                $erreur_msg = __('Montant incorrect.', 'paybox_gateway');
                 break;
             case '00015':
-                $erreur_msg = __('Paiement déjà effectué', $this->text_domain);
+                $erreur_msg = __('Paiement déjà effectué', 'paybox_gateway');
                 break;
             case '00016':
-                $erreur_msg = __('Abonné déjà existant (inscription nouvel abonné). Valeur \'U\' de la variable PBX_RETOUR.', $this->text_domain);
+                $erreur_msg = __('Abonné déjà existant (inscription nouvel abonné). Valeur \'U\' de la variable PBX_RETOUR.', 'paybox_gateway');
                 break;
             case '00021':
-                $erreur_msg = __('Carte non autorisée.', $this->text_domain);
+                $erreur_msg = __('Carte non autorisée.', 'paybox_gateway');
                 break;
             case '00029':
-                $erreur_msg = __('Carte non conforme. Code erreur renvoyé lors de la documentation de la variable « PBX_EMPREINTE ».', $this->text_domain);
+                $erreur_msg = __('Carte non conforme. Code erreur renvoyé lors de la documentation de la variable « PBX_EMPREINTE ».', 'paybox_gateway');
                 break;
             case '00030':
-                $erreur_msg = __('Temps d\'attente > 15 mn par l\'internaute/acheteur au niveau de la page de paiements.', $this->text_domain);
+                $erreur_msg = __('Temps d\'attente > 15 mn par l\'internaute/acheteur au niveau de la page de paiements.', 'paybox_gateway');
                 break;
             case '00031':
             case '00032':
-                $erreur_msg = __('Réservé', $this->text_domain);
+                $erreur_msg = __('Réservé', 'paybox_gateway');
                 break;
             case '00033':
-                $erreur_msg = __('Code pays de l\'adresse IP du navigateur de l\'acheteur non autorisé.', $this->text_domain);
+                $erreur_msg = __('Code pays de l\'adresse IP du navigateur de l\'acheteur non autorisé.', 'paybox_gateway');
                 break;
             // Nouveaux codes : 11/2013 (v6.1)
             case '00040':
-                $erreur_msg = __('Opération sans authentification 3-DSecure, bloquée par le filtre', $this->text_domain);
+                $erreur_msg = __('Opération sans authentification 3-DSecure, bloquée par le filtre', 'paybox_gateway');
                 break;
             case '99999':
-                $erreur_msg = __('Opération en attente de validation par l\'emmetteur du moyen de paiement.', $this->text_domain);
+                $erreur_msg = __('Opération en attente de validation par l\'emmetteur du moyen de paiement.', 'paybox_gateway');
                 break;
             default:
                 if (substr($code_erreur, 0, 3) == '001')
-                    $erreur_msg = __('Paiement refusé par le centre d\'autorisation. En cas d\'autorisation de la transaction par le centre d\'autorisation de la banque, le code erreur \'00100\' sera en fait remplacé directement par \'00000\'.', $this->text_domain);
+                    $erreur_msg = __('Paiement refusé par le centre d\'autorisation. En cas d\'autorisation de la transaction par le centre d\'autorisation de la banque, le code erreur \'00100\' sera en fait remplacé directement par \'00000\'.', 'paybox_gateway');
                 else
-                    $erreur_msg = __('Pas de message', $this->text_domain);
+                    $erreur_msg = __('Pas de message', 'paybox_gateway');
                 break;
         }
         return $erreur_msg;

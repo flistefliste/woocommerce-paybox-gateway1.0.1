@@ -1,9 +1,9 @@
 <?php
 	/**
-	 * Plugin Name: WooCommerce Paybox Payment Gateway
+	 * Plugin Name: Paybox WooCommerce Payment Gateway
 	 * Plugin URI: http://walliecreation.com/
 	 * Description: Gateway e-commerce for Paybox. Initial release by SWO (Open Boutique). Partially recoded by V. Pintat to fit whith WooCommerce 2.4.6 
-	 * Version: 1.0.1
+	 * Version: 1.0.2
 	 * Author: Vincent Pintat
 	 * Author URI: http://walliecreation.com/
 	 * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -47,7 +47,6 @@
 		DEFINE('THANKS_SHORTCODE', 'woocommerce_paybox_gateway_thanks');
 
 		
-
 		add_shortcode( THANKS_SHORTCODE, 'WC_Shortcode_Paybox_Thankyou::get' );
 		add_filter('woocommerce_payment_gateways', 'add_paybox_commerce_gateway');
 	}
