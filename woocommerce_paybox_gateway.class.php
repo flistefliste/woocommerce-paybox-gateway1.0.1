@@ -17,8 +17,11 @@ class WC_Paybox extends WC_Payment_Gateway {
         // Load the settings.
         $this->init_settings();
         // Get setting values
-        foreach ($this->settings as $key => $val)
+        foreach ($this->settings as $key => $val){
             $this->$key = $val;
+            //echo $key .' = '. $val.'<br>';
+        }
+           
         // Chargement des traductions
         $this->return_url = get_bloginfo('url' );
         load_plugin_textdomain($this->text_domain, false, dirname(plugin_basename(__FILE__)).'/lang/');
@@ -27,7 +30,8 @@ class WC_Paybox extends WC_Payment_Gateway {
         add_action('woocommerce_update_options_payment_gateways', array(&$this, 'process_admin_options'));
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         add_action('woocommerce_receipt_' . $this->id, array($this, 'getParamPaybox'));
-        add_action('init', array($this,'woocommerce_paybox_check_response'));
+        //add_action('init', array($this,'woocommerce_paybox_check_response'));
+      
     }
 
 
@@ -240,10 +244,11 @@ class WC_Paybox extends WC_Payment_Gateway {
             $param .= ' PBX_RANG=' . $this->paybox_rang;
             $param .= ' PBX_TOTAL=' . 100 * $order->get_total();
             $param .= ' PBX_CMD=' . $order->id;
-            $param .= ' PBX_REPONDRE_A=http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $this->return_url);
-            $param .= ' PBX_EFFECTUE=http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $this->callback_success_url);
-            $param .= ' PBX_REFUSE=http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $this->callback_refused_url);
-            $param .= ' PBX_ANNULE=http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $this->callback_cancel_url);
+            $param .= ' PBX_REPONDRE_A= '.$this->return_url;
+            $param .= ' PBX_PAYBOX= '.$this->paybox_url;
+            $param .= ' PBX_EFFECTUE='.$this->return_url . '/' . $this->callback_success_url;
+            $param .= ' PBX_REFUSE='.$this->return_url . '/' . $this->callback_refused_url;
+            $param .= ' PBX_ANNULE='.$this->return_url . '/' . $this->callback_cancel_url;
             $param .= ' PBX_DEVISE=978';
             $param .= ' PBX_DEVISE=SHA512'; // SHA512 (à paramétriser avec hash_algos() qd j'ai 2 min)
             $param .= ' PBX_TIME=' . date('c');
@@ -264,10 +269,10 @@ class WC_Paybox extends WC_Payment_Gateway {
                 $param .= '&PBX_DEVISE=978';
                 $param .= '&PBX_TYPEPAIEMENT=CARTE';
                 $param .= '&PBX_TYPECARTE=CB';
-                $param .= '&PBX_REPONDRE_A=http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $this->return_url);
-                $param .= '&PBX_EFFECTUE=http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $this->callback_success_url);
-                $param .= '&PBX_REFUSE=http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $this->callback_refused_url);
-                $param .= '&PBX_ANNULE=http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $this->callback_cancel_url);
+                $param .= '&PBX_REPONDRE_A=' . $this->return_url;
+                $param .= '&PBX_EFFECTUE='.$this->return_url . '/' . $this->callback_success_url;
+                $param .= '&PBX_REFUSE='.$this->return_url . '/' . $this->callback_refused_url;
+                $param .= '&PBX_ANNULE='.$this->return_url . '/' . $this->callback_cancel_url;
                 $param .= '&PBX_CMD=' . $order->id;
                 $param .= '&PBX_PORTEUR=' . $order->billing_email; //. $order->customer_user;
                 $param .= '&PBX_RETOUR=order:R;erreur:E;carte:C;numauto:A;numtrans:S;numabo:B;montantbanque:M;sign:K';
@@ -276,7 +281,8 @@ class WC_Paybox extends WC_Payment_Gateway {
 
                 $binKey = pack("H*", $this->paybox_key);
                 $hmac = strtoupper(hash_hmac('sha512', $param, $binKey));
-                $form_output = '<form method="POST" action="' . $this->paybox_url . '" name="PAYBOX"> 
+                $form_output = '<p>'.__('You will be redirected on Paybox plateform. If nothing happens please click on "Paybox" button below.', $this->text_domain).'</p>';
+                $form_output .= '<form method="POST" action="' . $this->paybox_url . '" name="PAYBOX"> 
                             <input type="hidden" name="PBX_SITE" value="' . $this->paybox_site_id . '">
                             <input type="hidden" name="PBX_RANG" value="' . $this->paybox_rang . '">
                             <input type="hidden" name="PBX_IDENTIFIANT" value="' . $this->paybox_identifiant . '">
@@ -284,17 +290,17 @@ class WC_Paybox extends WC_Payment_Gateway {
                             <input type="hidden" name="PBX_DEVISE" value="978">
                             <input type="hidden" name="PBX_TYPEPAIEMENT" value="CARTE">
                             <input type="hidden" name="PBX_TYPECARTE" value="CB">
-                            <input type="hidden" name="PBX_REPONDRE_A" value="http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $this->return_url) .'">
-                            <input type="hidden" name="PBX_EFFECTUE" value="http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $this->callback_success_url) .'">
-                            <input type="hidden" name="PBX_REFUSE" value="http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $this->callback_refused_url) .'">
-                            <input type="hidden" name="PBX_ANNULE" value="http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $this->callback_cancel_url) .'">
+                            <input type="hidden" name="PBX_REPONDRE_A" value="'.$this->return_url .'">
+                            <input type="hidden" name="PBX_EFFECTUE" value="'.$this->return_url . '/' . $this->callback_success_url .'">
+                            <input type="hidden" name="PBX_REFUSE" value="'.$this->return_url . '/' . $this->callback_refused_url .'">
+                            <input type="hidden" name="PBX_ANNULE" value="'.$this->return_url . '/' . $this->callback_cancel_url .'">
                             <input type="hidden" name="PBX_CMD" value="' . $order->id . '">  
                             <input type="hidden" name="PBX_PORTEUR" value="' . $order->billing_email . '">
                             <input type="hidden" name="PBX_RETOUR" value="order:R;erreur:E;carte:C;numauto:A;numtrans:S;numabo:B;montantbanque:M;sign:K">
                             <input type="hidden" name="PBX_HASH" value="SHA512">
                             <input type="hidden" name="PBX_TIME" value="' . date('c') . '">
                             <input type="hidden" name="PBX_HMAC" value="'. $hmac. '">
-                            <input type="submit" value="Envoyer">
+                            <input type="submit" value="Paybox">
                            </form>';
             }
             else{
@@ -303,12 +309,17 @@ class WC_Paybox extends WC_Payment_Gateway {
         }
         //form autosubmission 
         $form_output .=  '<script>
-                  function launchPaybox(){
-                      document.PAYBOX.submit();
+                  function launchPaybox(){';
+                  if (!empty($exe) && file_exists($exe)) {
+                    //allow preprod url using CGI : dynamic replace form action and PBX_PAYBOX values
+                    $form_output .= 'document.PAYBOX.action=\''.$this->paybox_url.'\';';
+                    $form_output .= 'document.PAYBOX.PBX_PAYBOX.value=\''.$this->paybox_url.'\';';
+                    }
+                     $form_output .= 'document.PAYBOX.submit();
                   }
                   t=setTimeout("launchPaybox()",' . ((isset($this->paybox_wait_time) && is_numeric($this->paybox_wait_time)) ? $this->paybox_wait_time : '100') . ');
                  </script>';
-        echo '<p>'.__('You will be redirected on Paybox plateform. If nothing happens please click on "Paybox" button below.', $this->text_domain).'</p>';         
+                 
         echo $form_output ;
     }
 
@@ -394,68 +405,7 @@ class WC_Paybox extends WC_Payment_Gateway {
     }
 
 
-    /**
-     * Reponse Paybox (Pour le serveur Paybox)
-     *
-     * @access public
-     * @return void
-     */
-    function woocommerce_paybox_check_response(){
-        if (isset($_GET['order']) && isset($_GET['sign']))
-        { // On a bien un retour ave une commande et une signature
-            $order = new WC_Order((int) $_GET['order']); // On récupère la commande
-            $pos_qs = strpos($_SERVER['REQUEST_URI'], '?');
-            $pos_sign = strpos($_SERVER['REQUEST_URI'], '&sign=');
-            $return_url = substr($_SERVER['REQUEST_URI'], 1, $pos_qs - 1);
-            $data = substr($_SERVER['REQUEST_URI'], $pos_qs + 1, $pos_sign - $pos_qs - 1);
-            $sign = substr($_SERVER['REQUEST_URI'], $pos_sign + 6);
-            // Est-on en réception d'un retour PayBox
-            $my_WC_Paybox = new WC_Paybox();
-            if (str_replace('//', '/', '/' . $return_url) == str_replace('//', '/', $my_WC_Paybox->return_url))
-            {
-                $std_msg = __('Paybox Return IP', $this->text_domain).' : '.WC_Paybox::getRealIpAddr().'<br/>'.$data.'<br/><div style="word-wrap:break-word;">'.__('PBX Sign', $this->text_domain).' : '. $sign . '<div>';
-                @ob_clean();
-                // Traitement du retour PayBox
-                // PBX_RETOUR=order:R;erreur:E;carte:C;numauto:A;numtrans:S;numabo:B;montantbanque:M;sign:K
-                if (isset($_GET['erreur']))
-                {
-                    switch ($_GET['erreur'])
-                    {
-                        case '00000':
-                            // OK Pas de pb
-                            // On vérifie la clef
-                            // recuperation de la cle publique
-                            $fp = $filedata = $key = FALSE;
-                            $fsize = filesize(dirname(__FILE__) . '/lib/pubkey.pem');
-                            $fp = fopen(dirname(__FILE__) . '/lib/pubkey.pem', 'r');
-                            $filedata = fread($fp, $fsize);
-                            fclose($fp);
-                            $key = openssl_pkey_get_public($filedata);
-                            $decoded_sign = base64_decode(urldecode($sign));
-                            $verif_sign = openssl_verify($data, $decoded_sign, $key);
-                            if ($verif_sign == 1) 
-                            {   // La commande est bien signé par PayBox
-                                // Si montant ok
-                                if ((int) (100 * $order->get_total()) == (int) $_GET['montantbanque']) 
-                                {
-                                    $order->add_order_note('<p style="color:green"><b>'.__('Paybox Return OK', $this->text_domain).'</b></p><br/>' . $std_msg);
-                                    $order->payment_complete();
-                                    wp_die(__('OK', $this->text_domain), '', array('response' => 200));
-                                }
-                                $order->add_order_note('<p style="color:red"><b>'.__('ERROR', $this->text_domain).'</b></p> '.__('Order Amount', $this->text_domain).'.<br/>' . $std_msg);
-                                wp_die(__('KO Amount modified', $this->text_domain).' : ' . $_GET['montantbanque'] . ' / ' . (100 * $order->get_total()), '', array('response' => 406));
-                            }
-                            $order->add_order_note('<p style="color:red"><b>'.__('ERROR', $this->text_domain).'</b></p> '.__('Signature Rejected', $this->text_domain).'.<br/>' . $std_msg);
-                            wp_die(__('KO Signature', $this->text_domain), '', array('response' => 406));
-                        default:
-                            $order->add_order_note('<p style="color:red"><b>'.__('PBX ERROR', $this->text_domain).' ' . $_GET['erreur'] . '</b> ' . WC_Paybox::getErreurMsg($_GET['erreur']) . '</p><br/>' . $std_msg);
-                            wp_die(__('OK received', $this->text_domain), '', array('response' => 200));
-                    }
-                } else
-                    wp_die(__('Test AutoResponse OK', $this->text_domain), '', array('response' => 200));
-            }
-        }
-    }
+    
 
 }
 
